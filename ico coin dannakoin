@@ -1,0 +1,54 @@
+pragma solidity ^0.4.21;
+
+contract ICOcoin {
+    string public name;
+    string public symbol;
+    uint public decimals;
+    uint public bonusEnds;
+    uint public icoEnds;
+    uint public icoStarts;
+    uint public allContributors;
+    uint allTokens;
+    address admin;
+    mapping (address => uint) public balances;
+
+
+//initialize values in constructor
+    function ICO () public {
+        name = "DannaKoin";
+        decimals = 10;
+        symbol = "DK";
+        bonusEnds = now + 5 days;
+        icoEnds = now + 4 weeks;
+        icoStarts = now;
+        allTokens = 1000000000000000000 * 100;
+        admin = msg.sender;
+        balances[msg.sender] = allTokens;
+    }
+
+//100 DK token = 1 ether becuase allTokens balance in wei equivalent
+    function buyTokens () public payable {
+        uint tokens;
+        tokens = msg.value * 100;
+        balances[msg.sender] = balances[msg.sender] + tokens;
+        allTokens = allTokens + tokens;
+    }
+
+    function totalSupply () public constant returns (uint) {
+        return allTokens;
+    }
+
+    function myBalance () public constant returns (uint) {
+        return (balances[msg.sender]);
+    }
+
+    function myAddress () public constant returns (address) {
+        address myAdd = msg.sender;
+        return myAdd;
+    }
+    
+    function endSale () public {
+        require(msg.sender == admin, "Only owner can end sale");
+        admin.transfer(address(this).balance);
+    }
+}
